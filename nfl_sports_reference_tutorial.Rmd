@@ -1,0 +1,36 @@
+---
+title: "nfl_sports_reference_tutorial"
+author: "Siddharth Venkiteswaran"
+date: '2022-07-28'
+output: html_document
+---
+
+## Step 1
+Load in the libraries needed to extract and clean the data
+```{r}
+library(tidyverse)
+library(readxl)
+library(htmltab)
+library(rvest)
+```
+
+## Step 2
+Go into pro-football-reference.com and select the table you want to work with, and then import that data into R and turn it into a data frame
+
+In this example, I will be using the data that contains the statistics of NFL Quarterbacks from the 2021 NFL season
+
+Make sure you have the selector gadget Chrome extension to select the table you want to use
+```{r}
+## Create a URL for the passing data
+passing_data_link <- read_html('https://www.pro-football-reference.com/years/2021/passing.htm')
+
+## Turn the information in the URL into a list
+passing_data_list = passing_data_link %>%
+  ## You can find the label of the specific table by using the selector gadget to select the table you want to use
+  html_nodes('#passing') %>%
+  html_table()
+
+## Create a temporary data frame to hold the information from the list
+## This is a temporary data frame because we still have to clean the data once we bring the data in
+temp_passing_df = passing_data_list[[1]]
+```
