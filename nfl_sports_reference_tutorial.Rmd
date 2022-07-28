@@ -34,3 +34,43 @@ passing_data_list = passing_data_link %>%
 ## This is a temporary data frame because we still have to clean the data once we bring the data in
 temp_passing_df = passing_data_list[[1]]
 ```
+
+## Step 3
+Once the data from the URL is turned into a data frame, it's time to clean the data so that we can use it to make visualizations and perform statistical methods with it
+```{r}
+## Remove the duplicate names in the temporary data frame
+## We cannot clean the data until all of the columns have unique names
+colnames(temp_passing_df)[c(11,14,16,17,19,20,21,22,26,27,28,29,30)] = c("Cmp_percentage","TD_percentage","Int_percentage","First_downs","Yards_per_attempt","Adjusted_yards_per_attempt","Yards_per_completion","Yards_per_game","Sck_yards","Sck_percentage","Net_yards_per_attempt","Adjusted_net_yards_per_attempt","Fourth_quarter_comebacks")
+
+## Remove the rank column from the data frame
+mod1_temp_passing_df = temp_passing_df %>%
+  filter(Rk != "Rk") %>%
+  select(-"Rk")
+
+## Change the values of columns with numbers in them to numerical ones
+mod2_temp_passing_df = mod1_temp_passing_df %>%
+  mutate_if(~any(str_detect(string = ., pattern = '^-?[0-9]\\d*(\\.\\d+)?$')), 
+            ~ as.numeric(.))
+
+## Change the NA values in the columns Fourth_quarter_comebacks and GWD to 0
+mod3_temp_passing_df = mod2_temp_passing_df %>%
+  mutate(Fourth_quarter_comebacks = replace_na(Fourth_quarter_comebacks, 0)) %>%
+  mutate(GWD = replace_na(GWD, 0))
+
+## Remove the rows that have NAs in the columns
+mod4_temp_passing_df = mod3_temp_passing_df %>%
+  na.omit()
+
+## Capitalize the position names in the position column
+mod5_temp_passing_df = mod4_temp_passing_df %>%
+  mutate(Pos = case_when(
+    Pos == 'qb' ~ 'QB',
+    Pos == 'wr' ~ 'WR',
+    Pos == 'rb' ~ 'RB',
+    TRUE ~ Pos
+  ))
+
+## Remove row 45, which has a problematic value for team (2TM)
+mod5_temp_passing_df = mod5_temp_passing_df[-c(45), ]
+```
+
