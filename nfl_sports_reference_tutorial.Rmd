@@ -72,5 +72,18 @@ mod5_temp_passing_df = mod4_temp_passing_df %>%
 
 ## Remove row 45, which has a problematic value for team (2TM)
 mod5_temp_passing_df = mod5_temp_passing_df[-c(45), ]
+
+## Change the value of the Pos column for Ben Roethlisberger to be QB 
+mod6_temp_passing_df = mod5_temp_passing_df %>%
+  mutate(Pos = case_when(
+    Player == 'Ben Roethlisberger' ~ 'QB',
+    TRUE ~ Pos
+  ))
+
+## Create a minimum value for passing attempts to filter the data frame by
+passing_df = mod6_temp_passing_df %>%
+  filter(Att >= 20)
 ```
+
+
 
