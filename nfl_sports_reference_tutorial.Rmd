@@ -12,6 +12,19 @@ library(tidyverse)
 library(readxl)
 library(htmltab)
 library(rvest)
+library(bslib)
+library(ggtext)
+library(ggalt)
+```
+
+```{r}
+theme = bs_theme(
+    bg = "#003831", 
+    fg = "#FFE395", 
+    primary = "#B38F4F", 
+    base_font = font_google("Prompt"),
+    code_font = font_google("JetBrains Mono")
+  )
 ```
 
 ## Step 2
@@ -85,5 +98,62 @@ passing_df = mod6_temp_passing_df %>%
   filter(Att >= 20)
 ```
 
+## Step 4
+Make a visualization with the data from the data frame
+```{r}
+## Sacks vs Interceptions 
+passing_df %>%
+  ggplot(aes(x = Sk, y = Int)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+   labs(x = "Sacks", y = "Interceptions Thrown", title = "The Effect Sacks Have On Interceptions Thrown") +
+  theme(plot.title = element_text(hjust = 0.5, face = 'bold'), 
+        axis.text.x = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold")) +
+  theme(plot.background = element_rect(fill = "#ADD8E6"),
+        panel.background = element_rect(fill = "#FFCCCB"))
+```
 
+```{r}
+
+## Completion percentage vs First downs 
+## Categorized by Age and Game winning drives
+passing_df %>%
+  ggplot(aes(x = Cmp_percentage, y = First_downs)) +
+  geom_jitter(aes(size = GWD, col = Age)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  labs(x = 'Completion Percentage', y = 'First Downs', title = 'Completion Percentage Compared to First Downs Gained', subtitle = 'Categorized by Age and Game Winning Drives') +
+  guides(size = guide_legend(title = 'Game Winning Drives')) +
+  theme(plot.title = element_text(hjust = 0.5, face = 'bold'), 
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold"),
+        legend.title = element_text(face = 'bold')) +
+  theme(plot.background = element_rect(fill = "#90EE90"),
+        panel.background = element_rect(fill = "#FFFF00"),
+        legend.background = element_rect(fill = '#90ee90'))
+```
+
+```{r}
+## Create a new column for passing_df for the plot to work properly
+passing_df_col1 = passing_df %>%
+  mutate(Career_stage = case_when(
+    Age > 20 & Age <= 26 ~ 'Young QB',
+    Age > 26 & Age <= 33 ~ 'Prime QB',
+    Age > 33 & Age <= 45 ~ 'Veteran QB'
+  ))
+
+passing_df_col1 %>%
+  ggplot(aes(x = Career_stage, y = Yards_per_attempt)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(x = 'Career Stage', y = 'Yards Per Attempt', title = 'Career Stage of Quarterbacks Compared to Their Yards Per Attempt') +
+  theme(plot.title = element_text(hjust = 0.5, face = 'bold'), 
+        axis.text.x = element_text(face = "bold"),
+        axis.text.y = element_text(face = "bold")) +
+  theme(plot.background = element_rect(fill = "#FFA500"),
+        panel.background = element_rect(fill = "#ADD8E6"))
+```
 
