@@ -168,14 +168,36 @@ From this visualization, something surprising that jumps out is the fact that ve
 
 ## Table of the last visualization
 ```{r}
+## Group the passing data frame with the Career_stage column by Career_stage
 passing_df_table = passing_df_col1 %>%
   group_by(Career_stage)
 
+## Add columns for the mean YPA, sd YPA, and sample size of YPA for each stage
 by_stage = passing_df_table %>%
   summarise(Mean_YPA = mean(Yards_per_attempt),
             SD_YPA = sd(Yards_per_attempt),
             Size_YPA = length(Yards_per_attempt))
 
-kable(by_stage, col.names = c("Career Stage", "Mean Yards Per Attempt", "Standard Deviation Yards Per Attempt", "Sample Size"))
+## Create the table using cable and custom column names
+career_table = kable(by_stage, col.names = c("Career Stage", "Mean Yards Per Attempt", "Standard Deviation Yards Per Attempt", "Sample Size"))
+
+## Change the styling of the table so that it looks better
+career_table %>%
+  kable_styling(full_width = FALSE)
+```
+
+```{r}
+## Add an additional table with a key for the viewer to understand the career stages
+stage_key = data.frame(
+  Stages = c("Prime QB", "Veteran QB", "Young QB"),
+  Definition = c(
+    "Quarterbacks who are older than 26 and less than or equal to the age of 33 ",
+    "Quarterbacks who are older than 33 and less than or equal to the age of 45 ", 
+    "Quarterbacks who are older than 20 and less than or equal to the age of 26 "
+  )
+)
+
+kable(stage_key) %>%
+  kable_styling(full_width = FALSE)
 ```
 
