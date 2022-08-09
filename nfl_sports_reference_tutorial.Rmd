@@ -15,6 +15,7 @@ library(rvest)
 library(bslib)
 library(ggtext)
 library(ggalt)
+library(kableExtra)
 ```
 
 ```{r}
@@ -115,6 +116,8 @@ passing_df %>%
         panel.background = element_rect(fill = "#FFCCCB"))
 ```
 
+## Summary
+From this plot, it is clear that there is a strong positive correlation between the number of sacks taken by a QB compared to the interceptions that they throw. As a QB gets sacked a higher number of times, their number of interceptions also increases. This may be as a result of the QB having less time in the pocket to throw a good pass, which could lead to some risky decision making, leading to a higher number of interceptions.
 ```{r}
 
 ## Completion percentage vs First downs 
@@ -136,6 +139,9 @@ passing_df %>%
         legend.background = element_rect(fill = '#90ee90'))
 ```
 
+## Summary
+In this visualization, it is clear that there is also a positive relationship between completion percentage and the number of first downs a QB had in a season. Additionally, QBs who had a high number of first downs also had more game winning drives on the season. Something to notice among the QBs who had a high number of game winning drives was that they tended to be older than other QBs in the NFL, as shown by the number of light blue dots amongst QBs who had a high number of game winning drives.  
+
 ```{r}
 ## Create a new column for passing_df for the plot to work properly
 passing_df_col1 = passing_df %>%
@@ -155,5 +161,21 @@ passing_df_col1 %>%
         axis.text.y = element_text(face = "bold")) +
   theme(plot.background = element_rect(fill = "#FFA500"),
         panel.background = element_rect(fill = "#ADD8E6"))
+```
+
+## Summary
+From this visualization, something surprising that jumps out is the fact that veteran QBs, who are defined as QBs from ages 33 to 45, have the highest median yards per attempt, and the lowest range of yards per attempt. This is unexpected, as older QBs are usually expected to have weaker arms, and as a result, attempt shorter throws. However, this plot shows how that assumption is false. Additionally, young QBs, defined as QBs from the age of 20 to 26, have the lowest median yards per attempt.
+
+## Table of the last visualization
+```{r}
+passing_df_table = passing_df_col1 %>%
+  group_by(Career_stage)
+
+by_stage = passing_df_table %>%
+  summarise(Mean_YPA = mean(Yards_per_attempt),
+            SD_YPA = sd(Yards_per_attempt),
+            Size_YPA = length(Yards_per_attempt))
+
+kable(by_stage, col.names = c("Career Stage", "Mean Yards Per Attempt", "Standard Deviation Yards Per Attempt", "Sample Size"))
 ```
 
